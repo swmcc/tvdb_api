@@ -25,7 +25,7 @@ class TVDBApi
   end
 
   def search(query)
-    request_endpoint(:search, { query: })
+    request_endpoint(:search, query: query)
   end
 
   def search_by_type(query, type)

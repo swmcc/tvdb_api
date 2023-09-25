@@ -28,28 +28,20 @@ class TVDBApi
     request_endpoint(:search, { query: })
   end
 
-  def search_people(query)
-    request_endpoint(:search, { query:, type: 'person' })
-  end
-
-  def search_series(query)
-    request_endpoint(:search, { query:, type: 'series' })
-  end
-
-  def search_movies(query)
-    request_endpoint(:search, { query:, type: 'movie' })
+  def search_by_type(query, type)
+    request_endpoint(:search, query: query, type: type)
   end
 
   def movie(id)
-    request_endpoint(:movie, { id: })
+    request_endpoint(:movie, id: id)
   end
 
   def series(id)
-    request_endpoint(:series, { id: })
+    request_endpoint(:series, id: id)
   end
 
   def person(id)
-    request_endpoint(:person, { id: })
+    request_endpoint(:person, id: id)
   end
 
   private
@@ -62,7 +54,7 @@ class TVDBApi
 
     response = @conn.get do |req|
       req.url url
-      req.params = params
+      req.params = params.reject { |k, _| url.include?("%{#{k}}") }
     end
 
     JSON.parse(response.body)

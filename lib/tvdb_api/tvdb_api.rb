@@ -5,10 +5,12 @@ require 'json'
 require_relative 'tvdb_api_middleware'
 
 class TVDBApi
-
   BASE_URL = 'https://api4.thetvdb.com'
   ENDPOINTS = {
     search: '/v4/search',
+    movie: '/v4/movies/%{id}/extended',
+    series: '/v4/series/%{id}/extended',
+    person: '/v4/people/%{id}/extended'
   }
 
   def initialize
@@ -23,19 +25,31 @@ class TVDBApi
   end
 
   def search(query)
-    request_endpoint(:search, { query: query })
+    request_endpoint(:search, { query: })
   end
 
   def search_people(query)
-    request_endpoint(:search, { query: query, type: 'person' })
+    request_endpoint(:search, { query:, type: 'person' })
   end
 
   def search_series(query)
-    request_endpoint(:search, { query: query, type: 'series' })
+    request_endpoint(:search, { query:, type: 'series' })
   end
 
   def search_movies(query)
-    request_endpoint(:search, { query: query, type: 'movie' })
+    request_endpoint(:search, { query:, type: 'movie' })
+  end
+
+  def movie(id)
+    request_endpoint(:movie, { id: })
+  end
+
+  def series(id)
+    request_endpoint(:series, { id: })
+  end
+
+  def person(id)
+    request_endpoint(:person, { id: })
   end
 
   private
@@ -43,6 +57,8 @@ class TVDBApi
   def request_endpoint(endpoint_key, params = {})
     url = ENDPOINTS[endpoint_key]
     raise "Invalid endpoint key: #{endpoint_key}" unless url
+
+    url = url % params if url.include?('%{')
 
     response = @conn.get do |req|
       req.url url

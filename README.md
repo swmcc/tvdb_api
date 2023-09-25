@@ -26,6 +26,13 @@ Or install it yourself as:
 
 Here are a few basic examples to get you started:
 
+Ensure you have set the following environment variables:
+
+  ```bash
+  export TVDB_API_KEY=your_api_key
+  export TVDB_PIN=your_pin
+  ```
+
   ```ruby
   require 'tvdb_api'
 
@@ -61,6 +68,27 @@ Searches TV Shows, Films, Actors, and People.
   response = api.search_films('Martin Sheen')
   # Do something with the response
   ```
+
+### movie
+
+    ```ruby
+    response = api.movie(12879)
+    # Do something with the response
+    ```
+
+### series
+
+    ```ruby
+    response = api.series(75299)
+    # Do something with the response
+    ```
+
+### person
+
+    ```ruby
+    response = api.person(256583)
+    # Do something with the response
+    ```
 
 ## Development
 

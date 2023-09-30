@@ -16,7 +16,7 @@ class TVDBApi
 
   DEFAULT_PARAMS = {
     movie: COMMON_PARAMS,
-    person: COMMON_PARAMS
+    series: COMMON_PARAMS
   }.freeze
 
   def initialize

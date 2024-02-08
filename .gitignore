@@ -1,5 +1,4 @@
 .ruby-gemset
-.ruby-version
 Makefile
 *.gem
 Gemfile.lock

@@ -32,7 +32,6 @@ describe TVDBApi do
 
       parsed_response = JSON.parse(json)
       expect(parsed_response['data']['results']).to eq(['Batman'])
-
     end
   end
 end

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-version = File.read(File.expand_path("VERSION", __dir__)).strip
+version = File.read(File.expand_path('VERSION', __dir__)).strip
 
 Gem::Specification.new do |spec|
   spec.name          = 'tvdb_api'
   spec.version       = version
+  spec.required_ruby_version = '>= 3.2'
   spec.summary       = 'A Ruby wrapper for the TVDB.org API'
   spec.description   = 'Provides a convenient way to interact with the TVDB API.'
   spec.author        = ['Stephen McCullough']
@@ -19,7 +20,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'json', '~> 2.0'
 
   spec.add_development_dependency 'brakeman', '~> 6.1'
-  spec.add_development_dependency 'rubocop', '~> 1.60'
   spec.add_development_dependency 'rspec', '~> 3.0'
+  spec.add_development_dependency 'rubocop', '~> 1.60'
   spec.add_development_dependency 'webmock', '~> 3.19'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end

@@ -17,17 +17,17 @@ describe TVDBAPIMiddleware do
     it 'raises an error if TVDB_API_TOKEN is missing' do
       allow(ENV).to receive(:[]).with('TVDB_PIN').and_return('some_pin')
 
-      expect {
+      expect do
         middleware.call(env)
-      }.to raise_error('TVDB_API_TOKEN environment variable is missing')
+      end.to raise_error('TVDB_API_TOKEN environment variable is missing')
     end
 
     it 'raises an error if TVDB_PIN is missing' do
       allow(ENV).to receive(:[]).with('TVDB_API_TOKEN').and_return('some_token')
 
-      expect {
+      expect do
         middleware.call(env)
-      }.to raise_error('TVDB_PIN environment variable is missing')
+      end.to raise_error('TVDB_PIN environment variable is missing')
     end
   end
 
@@ -35,12 +35,13 @@ describe TVDBAPIMiddleware do
     before do
       allow(ENV).to receive(:[]).with('TVDB_PIN').and_return('some_pin')
       allow(ENV).to receive(:[]).with('TVDB_API_TOKEN').and_return('some_token')
-      stub_request(:post, 'https://api4.thetvdb.com/v4/login').to_return(body: '{"data": {"token": "fake_token"}}', status: 200)
+      stub_request(:post, 'https://api4.thetvdb.com/v4/login').to_return(body: '{"data": {"token": "fake_token"}}',
+                                                                         status: 200)
     end
 
     it 'adds Authorization header if bearer token is present' do
       middleware = TVDBAPIMiddleware.new(->(env) { env })
-      env = { :request_headers => {} }
+      env = { request_headers: {} }
 
       middleware.call(env)
 

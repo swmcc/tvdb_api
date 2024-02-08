@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faraday'
 require 'json'
 
@@ -14,17 +16,17 @@ class TVDBAPIMiddleware < Faraday::Middleware
     api_token = ENV['TVDB_API_TOKEN']
     pin = ENV['TVDB_PIN']
 
-    raise "TVDB_API_TOKEN environment variable is missing" if api_token.nil?
-    raise "TVDB_PIN environment variable is missing" if pin.nil?
+    raise 'TVDB_API_TOKEN environment variable is missing' if api_token.nil?
+    raise 'TVDB_PIN environment variable is missing' if pin.nil?
 
     return @bearer_token if @bearer_token
 
     response = Faraday.post(URL) do |req|
       req.headers['Content-Type'] = 'application/json'
       req.body = JSON.generate({
-        'apikey': api_token,
-        'pin': pin
-      })
+                                 apikey: api_token,
+                                 pin:
+                               })
     end
 
     raise "Failed to login: #{response.body}" unless response.success?

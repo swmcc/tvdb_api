@@ -9,9 +9,9 @@ class TVDBApi
   COMMON_PARAMS = { meta: 'translations', short: 'false' }.freeze
   ENDPOINTS = {
     search: '/v4/search',
-    movie:  '/v4/movies/%{id}/extended',
-    series: '/v4/series/%{id}/extended',
-    person: '/v4/people/%{id}/extended'
+    movie: '/v4/movies/%<id>s/extended',
+    series: '/v4/series/%<id>s/extended',
+    person: '/v4/people/%<id>s/extended'
   }.freeze
 
   DEFAULT_PARAMS = {
@@ -25,23 +25,23 @@ class TVDBApi
   end
 
   def search(query)
-    request(:search, query: query)
+    request(:search, query:)
   end
 
   def search_by_type(query, type)
-    request(:search, query: query, type: type)
+    request(:search, query:, type:)
   end
 
   def movie(id)
-    request(:movie, id: id)
+    request(:movie, id:)
   end
 
   def series(id)
-    request(:series, id: id)
+    request(:series, id:)
   end
 
   def person(id)
-    request(:person, id: id)
+    request(:person, id:)
   end
 
   private
@@ -66,7 +66,7 @@ class TVDBApi
     default_params = DEFAULT_PARAMS[endpoint_key] || {}
     params = params.merge(default_params)
 
-    url = url % params if url.include?('%{')
+    url %= params if url.include?('%{')
 
     response = @conn.get do |req|
       req.url url
@@ -76,4 +76,3 @@ class TVDBApi
     JSON.parse(response.body)
   end
 end
-

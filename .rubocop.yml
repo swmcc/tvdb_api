@@ -1,0 +1,32 @@
+# .rubocop.yml
+AllCops:
+  NewCops: enable
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*.rb" # Excludes spec files from BlockLength checks
+
+Metrics/AbcSize:
+  Max: 20 # Adjusts the ABC size limit
+
+Metrics/MethodLength:
+  Max: 15 # Adjusts the method length limit
+
+Style/Documentation:
+  Exclude:
+    - "lib/**/*.rb" # Excludes files in lib/ from documentation requirement
+
+Lint/ConstantDefinitionInBlock:
+  Enabled: false # Disables the warning for constants defined in blocks
+
+Style/FetchEnvVar:
+  Exclude:
+    - "lib/**/*.rb" # Excludes file sin lib from envar requirement
+
+Gemspec/RequiredRubyVersion:
+  Exclude:
+    - "*.gemspec" # Excludes gemspec files from this check
+
+Gemspec/DevelopmentDependencies:
+  Exclude:
+    - "tvdb_api.gemspec"

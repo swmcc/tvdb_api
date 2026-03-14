@@ -47,5 +47,33 @@ describe TVDBAPIMiddleware do
 
       expect(env[:request_headers]['Authorization']).to eq('Bearer fake_token')
     end
+
+    it 'caches the bearer token across multiple calls' do
+      middleware = TVDBAPIMiddleware.new(->(env) { env })
+
+      middleware.call({ request_headers: {} })
+      middleware.call({ request_headers: {} })
+      middleware.call({ request_headers: {} })
+
+      expect(WebMock).to have_requested(:post, 'https://api4.thetvdb.com/v4/login').once
+    end
+  end
+
+  context 'when login fails' do
+    before do
+      allow(ENV).to receive(:[]).with('TVDB_PIN').and_return('some_pin')
+      allow(ENV).to receive(:[]).with('TVDB_API_TOKEN').and_return('invalid_token')
+      stub_request(:post, 'https://api4.thetvdb.com/v4/login')
+        .to_return(body: '{"status": "failure", "message": "Invalid credentials"}', status: 401)
+    end
+
+    it 'raises an error with the response body' do
+      middleware = TVDBAPIMiddleware.new(->(env) { env })
+      env = { request_headers: {} }
+
+      expect do
+        middleware.call(env)
+      end.to raise_error(/Failed to login/)
+    end
   end
 end

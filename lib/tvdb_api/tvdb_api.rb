@@ -66,11 +66,11 @@ class TVDBApi
     default_params = DEFAULT_PARAMS[endpoint_key] || {}
     params = params.merge(default_params)
 
-    url %= params if url.include?('%{')
+    url = format(url, params) if url.include?('%<')
 
     response = @conn.get do |req|
       req.url url
-      req.params = params.reject { |k, _| url.include?("%{#{k}}") }
+      req.params = params.except(:id)
     end
 
     JSON.parse(response.body)

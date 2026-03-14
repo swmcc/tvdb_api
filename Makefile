@@ -1,4 +1,5 @@
 APP_NAME=tvdb_api
+VERSION=$(shell cat VERSION)
 GREEN := $(shell tput -Txterm setaf 2)
 YELLOW := $(shell tput -Txterm setaf 3)
 RESET := $(shell tput -Txterm sgr0)
@@ -30,17 +31,27 @@ lint.fix: ## Auto-fix RuboCop offenses
 check: lint test ## Run all checks (lint + test)
 
 # 📦 Build & Release
-build: ## Build the gem
+build: clean ## Build the gem
 	gem build tvdb_api.gemspec
 
 clean: ## Remove built gems
 	rm -f *.gem
 
+release: check build ## Create a new release (runs checks, builds, tags, pushes)
+	@echo "$(GREEN)Creating release v$(VERSION)...$(RESET)"
+	git tag -a v$(VERSION) -m "Release v$(VERSION)"
+	git push origin v$(VERSION)
+	@echo "$(GREEN)Release v$(VERSION) created and pushed!$(RESET)"
+	@echo "$(YELLOW)GitHub Actions will publish to RubyGems via trusted publishing.$(RESET)"
+
+version: ## Show current version
+	@echo "$(GREEN)$(APP_NAME) v$(VERSION)$(RESET)"
+
 # 📖 Help
 help: ## Show all available make targets
-	@echo "$(GREEN)$(APP_NAME) - Available targets:$(RESET)"
+	@echo "$(GREEN)$(APP_NAME) v$(VERSION) - Available targets:$(RESET)"
 	@grep -E '^[a-zA-Z0-9_.-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| sort \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "  $(YELLOW)%-20s$(RESET) %s\n", $$1, $$2}'
 
-.PHONY: install console test test.focus lint lint.fix check build clean help
+.PHONY: install console test test.focus lint lint.fix check build clean release version help

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="50%" style="stop-color:#16213e"/>
+      <stop offset="100%" style="stop-color:#0f3460"/>
+    </linearGradient>
+    <linearGradient id="tvGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e94560"/>
+      <stop offset="100%" style="stop-color:#ff6b6b"/>
+    </linearGradient>
+    <linearGradient id="screenGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ecca3"/>
+      <stop offset="100%" style="stop-color:#45b7aa"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="200" fill="url(#bg)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="50" cy="100" r="120" fill="#e94560" opacity="0.03"/>
+  <circle cx="750" cy="100" r="150" fill="#4ecca3" opacity="0.03"/>
+
+  <!-- TV Icon -->
+  <g transform="translate(80, 55)">
+    <!-- TV outer frame -->
+    <rect x="0" y="20" width="90" height="70" rx="8" fill="none" stroke="url(#tvGlow)" stroke-width="3" filter="url(#glow)"/>
+    <!-- TV screen -->
+    <rect x="8" y="28" width="74" height="54" rx="4" fill="url(#screenGlow)" opacity="0.2"/>
+    <!-- Antenna -->
+    <line x1="30" y1="20" x2="15" y2="0" stroke="url(#tvGlow)" stroke-width="3" stroke-linecap="round"/>
+    <line x1="60" y1="20" x2="75" y2="0" stroke="url(#tvGlow)" stroke-width="3" stroke-linecap="round"/>
+    <!-- Screen lines (signal) -->
+    <line x1="20" y1="45" x2="35" y2="45" stroke="#4ecca3" stroke-width="2" opacity="0.6"/>
+    <line x1="40" y1="55" x2="60" y2="55" stroke="#4ecca3" stroke-width="2" opacity="0.6"/>
+    <line x1="50" y1="65" x2="70" y2="65" stroke="#4ecca3" stroke-width="2" opacity="0.6"/>
+  </g>
+
+  <!-- Main title -->
+  <text x="200" y="95" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="48" font-weight="700" fill="#ffffff">tvdb_api</text>
+
+  <!-- Subtitle -->
+  <text x="200" y="130" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="18" fill="#a0a0a0">Ruby wrapper for the TVDB.org API</text>
+
+  <!-- Version badge -->
+  <g transform="translate(200, 145)">
+    <rect width="45" height="22" rx="4" fill="#e94560" opacity="0.2"/>
+    <rect x="1" y="1" width="43" height="20" rx="3" fill="none" stroke="#e94560" stroke-width="1" opacity="0.5"/>
+    <text x="22.5" y="15" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#e94560" text-anchor="middle">Ruby</text>
+  </g>
+
+  <!-- API badge -->
+  <g transform="translate(255, 145)">
+    <rect width="55" height="22" rx="4" fill="#4ecca3" opacity="0.2"/>
+    <rect x="1" y="1" width="53" height="20" rx="3" fill="none" stroke="#4ecca3" stroke-width="1" opacity="0.5"/>
+    <text x="27.5" y="15" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#4ecca3" text-anchor="middle">API v4</text>
+  </g>
+
+  <!-- Decorative dots -->
+  <circle cx="700" cy="50" r="3" fill="#e94560" opacity="0.4"/>
+  <circle cx="720" cy="70" r="2" fill="#4ecca3" opacity="0.4"/>
+  <circle cx="680" cy="80" r="4" fill="#e94560" opacity="0.3"/>
+  <circle cx="740" cy="130" r="3" fill="#4ecca3" opacity="0.4"/>
+  <circle cx="710" cy="150" r="2" fill="#e94560" opacity="0.3"/>
+</svg>

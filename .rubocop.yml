@@ -1,6 +1,8 @@
 # .rubocop.yml
 AllCops:
   NewCops: enable
+  TargetRubyVersion: 3.2
+  SuggestExtensions: false
 
 Metrics/BlockLength:
   Exclude:

@@ -1,46 +1,48 @@
 # frozen_string_literal: true
 
 require 'webmock/rspec'
-require_relative '../lib/tvdb_api/tvdb_api_middleware'
+require_relative '../lib/tvdb_api'
 
-describe TVDBAPIMiddleware do
-  let(:env) { { request_headers: {} } }
-  let(:app) { double('app') }
-  let(:middleware) { described_class.new(app) }
+RSpec.describe TVDB::Middleware::Authentication do
+  let(:app) { ->(env) { env } }
+  let(:login_url) { 'https://api4.thetvdb.com/v4/login' }
 
   before do
-    allow(app).to receive(:call)
-    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:fetch).and_call_original
   end
 
-  context 'when environment variables are missing' do
-    it 'raises an error if TVDB_API_TOKEN is missing' do
-      allow(ENV).to receive(:[]).with('TVDB_PIN').and_return('some_pin')
+  describe 'with missing credentials' do
+    it 'raises ConfigurationError when TVDB_API_TOKEN is missing' do
+      allow(ENV).to receive(:fetch).with('TVDB_API_TOKEN', nil).and_return(nil)
+      allow(ENV).to receive(:fetch).with('TVDB_PIN', nil).and_return('some_pin')
 
-      expect do
-        middleware.call(env)
-      end.to raise_error('TVDB_API_TOKEN environment variable is missing')
+      middleware = described_class.new(app)
+      env = { request_headers: {} }
+
+      expect { middleware.call(env) }.to raise_error(TVDB::ConfigurationError, 'TVDB API token is missing')
     end
 
-    it 'raises an error if TVDB_PIN is missing' do
-      allow(ENV).to receive(:[]).with('TVDB_API_TOKEN').and_return('some_token')
+    it 'raises ConfigurationError when TVDB_PIN is missing' do
+      allow(ENV).to receive(:fetch).with('TVDB_API_TOKEN', nil).and_return('some_token')
+      allow(ENV).to receive(:fetch).with('TVDB_PIN', nil).and_return(nil)
 
-      expect do
-        middleware.call(env)
-      end.to raise_error('TVDB_PIN environment variable is missing')
+      middleware = described_class.new(app)
+      env = { request_headers: {} }
+
+      expect { middleware.call(env) }.to raise_error(TVDB::ConfigurationError, 'TVDB PIN is missing')
     end
   end
 
-  context 'when environment variables are present' do
+  describe 'with valid credentials from environment' do
     before do
-      allow(ENV).to receive(:[]).with('TVDB_PIN').and_return('some_pin')
-      allow(ENV).to receive(:[]).with('TVDB_API_TOKEN').and_return('some_token')
-      stub_request(:post, 'https://api4.thetvdb.com/v4/login').to_return(body: '{"data": {"token": "fake_token"}}',
-                                                                         status: 200)
+      allow(ENV).to receive(:fetch).with('TVDB_PIN', nil).and_return('some_pin')
+      allow(ENV).to receive(:fetch).with('TVDB_API_TOKEN', nil).and_return('some_token')
+      stub_request(:post, login_url)
+        .to_return(body: '{"data": {"token": "fake_token"}}', status: 200)
     end
 
-    it 'adds Authorization header if bearer token is present' do
-      middleware = TVDBAPIMiddleware.new(->(env) { env })
+    it 'adds Authorization header with bearer token' do
+      middleware = described_class.new(app)
       env = { request_headers: {} }
 
       middleware.call(env)
@@ -49,31 +51,51 @@ describe TVDBAPIMiddleware do
     end
 
     it 'caches the bearer token across multiple calls' do
-      middleware = TVDBAPIMiddleware.new(->(env) { env })
+      middleware = described_class.new(app)
 
       middleware.call({ request_headers: {} })
       middleware.call({ request_headers: {} })
       middleware.call({ request_headers: {} })
 
-      expect(WebMock).to have_requested(:post, 'https://api4.thetvdb.com/v4/login').once
+      expect(WebMock).to have_requested(:post, login_url).once
     end
   end
 
-  context 'when login fails' do
+  describe 'with explicit credentials' do
     before do
-      allow(ENV).to receive(:[]).with('TVDB_PIN').and_return('some_pin')
-      allow(ENV).to receive(:[]).with('TVDB_API_TOKEN').and_return('invalid_token')
-      stub_request(:post, 'https://api4.thetvdb.com/v4/login')
+      stub_request(:post, login_url)
+        .to_return(body: '{"data": {"token": "explicit_token"}}', status: 200)
+    end
+
+    it 'uses provided credentials instead of environment variables' do
+      middleware = described_class.new(app, api_token: 'my_token', pin: 'my_pin')
+      env = { request_headers: {} }
+
+      middleware.call(env)
+
+      expect(env[:request_headers]['Authorization']).to eq('Bearer explicit_token')
+    end
+  end
+
+  describe 'when login fails' do
+    before do
+      allow(ENV).to receive(:fetch).with('TVDB_PIN', nil).and_return('some_pin')
+      allow(ENV).to receive(:fetch).with('TVDB_API_TOKEN', nil).and_return('invalid_token')
+      stub_request(:post, login_url)
         .to_return(body: '{"status": "failure", "message": "Invalid credentials"}', status: 401)
     end
 
-    it 'raises an error with the response body' do
-      middleware = TVDBAPIMiddleware.new(->(env) { env })
+    it 'raises AuthenticationError' do
+      middleware = described_class.new(app)
       env = { request_headers: {} }
 
-      expect do
-        middleware.call(env)
-      end.to raise_error(/Failed to login/)
+      expect { middleware.call(env) }.to raise_error(TVDB::AuthenticationError, /Failed to authenticate/)
+    end
+  end
+
+  describe 'backwards compatibility' do
+    it 'provides TVDBAPIMiddleware alias' do
+      expect(TVDBAPIMiddleware).to eq(TVDB::Middleware::Authentication)
     end
   end
 end

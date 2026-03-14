@@ -1,153 +1,138 @@
-# TVDB API
+<p align="center">
+  <img src="https://raw.githubusercontent.com/swmcc/tvdb_api/main/assets/header.svg" alt="tvdb_api" width="800">
+</p>
 
-A simple Ruby gem to interface with the TVDB.org API, making it easy to search and fetch information about TV, films, actors etc.
+<p align="center">
+  <a href="https://rubygems.org/gems/tvdb_api"><img src="https://img.shields.io/gem/v/tvdb_api.svg" alt="Gem Version"></a>
+  <a href="https://github.com/swmcc/tvdb_api/actions"><img src="https://github.com/swmcc/tvdb_api/workflows/CI/badge.svg" alt="CI Status"></a>
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+</p>
+
+---
+
+A simple Ruby gem to interface with the TVDB.org API, making it easy to search and fetch information about TV series, films, and people.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-  ```ruby
-  gem 'tvdb_api'
-  ```
+```ruby
+gem 'tvdb_api'
+```
 
 And then execute:
 
-  ```bash
-  $ bundle install
-  ```
+```bash
+bundle install
+```
 
 Or install it yourself as:
 
-  ```bash
-  $ gem install tvdb_api
-  ```
+```bash
+gem install tvdb_api
+```
+
+## Configuration
+
+Set the following environment variables:
+
+```bash
+export TVDB_API_TOKEN=your_api_key
+export TVDB_PIN=your_pin
+```
 
 ## Usage
 
-Here are a few basic examples to get you started:
+```ruby
+require 'tvdb_api'
 
-Ensure you have set the following environment variables:
+api = TVDBApi.new
+```
 
-  ```bash
-  export TVDB_API_KEY=your_api_key
-  export TVDB_PIN=your_pin
-  ```
+### Search
 
-  ```ruby
-  require 'tvdb_api'
+Search across TV shows, films, and people:
 
-  api = TVDBApi.new
-  ```
+```ruby
+response = api.search('The Dark Knight')
+```
 
-### search
+### Search by Type
 
-Searches TV Shows, Films, Actors, and People.
+Filter search results by type:
 
-  ```ruby
-  response = api.search('The Dark Knight')
-  # Do something with the response
-  ```
+```ruby
+# Search for series only
+response = api.search_by_type('The Simpsons', 'series')
 
-### search_series
+# Search for movies only
+response = api.search_by_type('Star Wars', 'movie')
+```
 
-  ```ruby
-  response = api.search_series('The Simpsons')
-  # Do something with the response
-  ```
+### Get Movie Details
 
-### search_films
+```ruby
+response = api.movie(12879)
+```
 
-  ```ruby
-  response = api.search_films('Star Wars')
-  # Do something with the response
-  ```
+### Get Series Details
 
-### search_people
+```ruby
+response = api.series(75299)
+```
 
-  ```ruby
-  response = api.search_films('Martin Sheen')
-  # Do something with the response
-  ```
+### Get Person Details
 
-### movie
-
-    ```ruby
-    response = api.movie(12879)
-    # Do something with the response
-    ```
-
-### series
-
-    ```ruby
-    response = api.series(75299)
-    # Do something with the response
-    ```
-
-### person
-
-    ```ruby
-    response = api.person(256583)
-    # Do something with the response
-    ```
+```ruby
+response = api.person(256583)
+```
 
 ## Development
 
-To set up the development environment, follow these steps:
+### Prerequisites
 
-1. Clone the repository:
+- Ruby >= 3.2
+- Bundler
 
-  ```bash
-  git clone https://github.com/your-username/tvdb_api.git
-  ```
+### Setup
 
-2. Change into the directory:
+```bash
+git clone https://github.com/swmcc/tvdb_api.git
+cd tvdb_api
+make install
+```
 
-  ```bash
-  cd tvdb_api_wrapper
-  ```
+### Make Targets
 
-3. Install dependencies:
-
-  ```bash
-  bundle install
-  ```
+| Target | Description |
+|--------|-------------|
+| `make install` | Install dependencies |
+| `make console` | Start interactive Ruby console with gem loaded |
+| `make test` | Run all tests |
+| `make test.focus` | Run tests with focus tag |
+| `make lint` | Run RuboCop linter |
+| `make lint.fix` | Auto-fix RuboCop offenses |
+| `make check` | Run all checks (lint + test) |
+| `make build` | Build the gem |
+| `make clean` | Remove built gems |
+| `make help` | Show all available targets |
 
 ### Running Tests
 
-To run RSpec tests, execute the following:
+```bash
+make test
 
-  ```bash
-  rspec
-  ```
+# or run a specific test file
+bundle exec rspec spec/tvdb_api_spec.rb
+
+# or run a specific test by line number
+bundle exec rspec spec/tvdb_api_spec.rb:27
+```
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at [here](https://github.com/swmcc/tvdb_api).
+Bug reports and pull requests are welcome on GitHub at [https://github.com/swmcc/tvdb_api](https://github.com/swmcc/tvdb_api).
 
 ## License
 
 The gem is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-```
-MIT License
-
-Copyright (c) 2023 Stephen McCullough
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```

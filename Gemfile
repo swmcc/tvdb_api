@@ -3,3 +3,9 @@
 source 'https://rubygems.org'
 
 gemspec
+
+group :development, :test do
+  gem 'rspec', '~> 3.0'
+  gem 'rubocop', '~> 1.60'
+  gem 'webmock', '~> 3.19'
+end

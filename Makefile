@@ -1,0 +1,57 @@
+APP_NAME=tvdb_api
+VERSION=$(shell cat VERSION)
+GREEN := $(shell tput -Txterm setaf 2)
+YELLOW := $(shell tput -Txterm setaf 3)
+RESET := $(shell tput -Txterm sgr0)
+
+.DEFAULT_GOAL := help
+
+# 🧩 Local Development
+install: ## Install dependencies
+	bundle install
+
+console: ## Start interactive Ruby console with gem loaded
+	bundle exec irb -r ./lib/tvdb_api
+
+# 🧪 Testing
+test: ## Run all tests
+	bundle exec rspec
+
+test.focus: ## Run tests with focus tag
+	bundle exec rspec --tag focus
+
+# 🔍 Linting & Security
+lint: ## Run RuboCop linter
+	bundle exec rubocop
+
+lint.fix: ## Auto-fix RuboCop offenses
+	bundle exec rubocop -A
+
+# ✅ CI
+check: lint test ## Run all checks (lint + test)
+
+# 📦 Build & Release
+build: clean ## Build the gem
+	gem build tvdb_api.gemspec
+
+clean: ## Remove built gems
+	rm -f *.gem
+
+release: check build ## Create a new release (runs checks, builds, tags, pushes)
+	@echo "$(GREEN)Creating release v$(VERSION)...$(RESET)"
+	git tag -a v$(VERSION) -m "Release v$(VERSION)"
+	git push origin v$(VERSION)
+	@echo "$(GREEN)Release v$(VERSION) created and pushed!$(RESET)"
+	@echo "$(YELLOW)GitHub Actions will publish to RubyGems via trusted publishing.$(RESET)"
+
+version: ## Show current version
+	@echo "$(GREEN)$(APP_NAME) v$(VERSION)$(RESET)"
+
+# 📖 Help
+help: ## Show all available make targets
+	@echo "$(GREEN)$(APP_NAME) v$(VERSION) - Available targets:$(RESET)"
+	@grep -E '^[a-zA-Z0-9_.-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+		| sort \
+		| awk 'BEGIN {FS = ":.*?## "}; {printf "  $(YELLOW)%-20s$(RESET) %s\n", $$1, $$2}'
+
+.PHONY: install console test test.focus lint lint.fix check build clean release version help
